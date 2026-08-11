@@ -26,7 +26,7 @@ require_once __DIR__ . '/functions/section.php';
                 <div class="auth-brand">
                     <span>Administrator</span>
                     <h2>Manage Sections</h2>
-                    <p class="note">Add, rename, or remove the sections students can be assigned to.</p>
+                    <p class="note">Add, rename, or remove the sections students can be assigned to. Each section belongs to one grade.</p>
                 </div>
                 <div style="margin-top:24px;">
                     <?php if ($successMessage !== ''): ?>
@@ -47,6 +47,15 @@ require_once __DIR__ . '/functions/section.php';
                                 Section name<br>
                                 <input type="text" name="name" value="<?= htmlspecialchars($editingSection['name'] ?? '') ?>" required style="width:100%;padding:10px;border:1px solid #dbe7f0;border-radius:12px;">
                             </label>
+                            <label style="min-width:160px;">
+                                Grade<br>
+                                <select name="grade_id" required style="width:100%;padding:10px;border:1px solid #dbe7f0;border-radius:12px;">
+                                    <option value="" disabled <?= !$editingSection ? 'selected' : '' ?>>Select grade</option>
+                                    <?php foreach ($grades as $gr): ?>
+                                        <option value="<?= (int) $gr['id'] ?>" <?= $editingSection && (int) $editingSection['grade_id'] === (int) $gr['id'] ? 'selected' : '' ?>><?= htmlspecialchars($gr['name']) ?></option>
+                                    <?php endforeach; ?>
+                                </select>
+                            </label>
                             <button type="submit" class="btn" style="padding:12px 16px;"><?= $editingSection ? 'Save changes' : 'Add section' ?></button>
                             <?php if ($editingSection): ?>
                                 <a href="section.php" style="align-self:center;color:#4b7bec;">Cancel</a>
@@ -61,6 +70,7 @@ require_once __DIR__ . '/functions/section.php';
                                     <tr style="background:rgba(75,124,236,.08);text-align:left;">
                                         <th style="padding:12px 14px;border-bottom:1px solid #dbe7f0;">ID</th>
                                         <th style="padding:12px 14px;border-bottom:1px solid #dbe7f0;">Name</th>
+                                        <th style="padding:12px 14px;border-bottom:1px solid #dbe7f0;">Grade</th>
                                         <th style="padding:12px 14px;border-bottom:1px solid #dbe7f0;">Students</th>
                                         <th style="padding:12px 14px;border-bottom:1px solid #dbe7f0;">Actions</th>
                                     </tr>
@@ -70,6 +80,7 @@ require_once __DIR__ . '/functions/section.php';
                                         <tr style="border-top:1px solid #edf2f7;">
                                             <td style="padding:12px 14px;"><?= htmlspecialchars($section['id']) ?></td>
                                             <td style="padding:12px 14px;"><?= htmlspecialchars($section['name']) ?></td>
+                                            <td style="padding:12px 14px;"><?= htmlspecialchars($gradeNames[(int) $section['grade_id']] ?? '—') ?></td>
                                             <td style="padding:12px 14px;"><?= $sectionCounts[(int) $section['id']] ?? 0 ?></td>
                                             <td style="padding:12px 14px;">
                                                 <a href="section.php?edit_id=<?= htmlspecialchars($section['id']) ?>" style="margin-right:8px;padding:7px 12px;border-radius:10px;border:1px solid #4b7bec;color:#4b7bec;text-decoration:none;font-size:13px;">Edit</a>

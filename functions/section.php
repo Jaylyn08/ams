@@ -1,6 +1,13 @@
 <?php
+// Backend for section.php (the "Manage Sections" admin page). Every section
+// belongs to exactly one grade (section.grade_id), so create/update here
+// always take a grade_id alongside the name — that's what lets the Add/Edit
+// Student forms filter their Section dropdown down to whichever grade was
+// picked.
+
 require_once __DIR__ . '/../includes/db.php';
 require_once __DIR__ . '/../includes/sections.php';
+require_once __DIR__ . '/../includes/grades.php';
 
 $successMessage = '';
 $errorMessage = '';
@@ -12,12 +19,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     if ($action === 'create' || $action === 'update') {
         $name = trim($_POST['name'] ?? '');
+        $gradeId = intval($_POST['grade_id'] ?? 0);
+        $validGradeIds = array_map('intval', array_column(getGrades($conn), 'id'));
 
         if ($name === '') {
             $errorMessage = 'Section name is required.';
+        } elseif (!in_array($gradeId, $validGradeIds, true)) {
+            $errorMessage = 'Please select a valid grade.';
         } elseif ($action === 'create') {
-            $stmt = mysqli_prepare($conn, 'INSERT INTO section (name) VALUES (?)');
-            mysqli_stmt_bind_param($stmt, 's', $name);
+            $stmt = mysqli_prepare($conn, 'INSERT INTO section (name, grade_id) VALUES (?, ?)');
+            mysqli_stmt_bind_param($stmt, 'si', $name, $gradeId);
             if (mysqli_stmt_execute($stmt)) {
                 $successMessage = 'Section added successfully.';
             } elseif (mysqli_errno($conn) === 1062) {
@@ -27,8 +38,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             }
             mysqli_stmt_close($stmt);
         } else {
-            $stmt = mysqli_prepare($conn, 'UPDATE section SET name = ? WHERE id = ?');
-            mysqli_stmt_bind_param($stmt, 'si', $name, $sectionId);
+            $stmt = mysqli_prepare($conn, 'UPDATE section SET name = ?, grade_id = ? WHERE id = ?');
+            mysqli_stmt_bind_param($stmt, 'sii', $name, $gradeId, $sectionId);
             if (mysqli_stmt_execute($stmt)) {
                 $successMessage = 'Section updated successfully.';
             } elseif (mysqli_errno($conn) === 1062) {
@@ -56,7 +67,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
 if (isset($_GET['edit_id'])) {
     $editId = intval($_GET['edit_id']);
-    $stmt = mysqli_prepare($conn, 'SELECT id, name FROM section WHERE id = ?');
+    $stmt = mysqli_prepare($conn, 'SELECT id, name, grade_id FROM section WHERE id = ?');
     mysqli_stmt_bind_param($stmt, 'i', $editId);
     mysqli_stmt_execute($stmt);
     $result = mysqli_stmt_get_result($stmt);
@@ -72,4 +83,8 @@ if ($countResult) {
     }
 }
 
+// grade name per section, for the "Grade" column in the sections table
+$gradeNames = array_column(getGrades($conn), 'name', 'id');
+
 $sections = getSections($conn);
+$grades = getGrades($conn);

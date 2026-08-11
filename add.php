@@ -53,21 +53,26 @@ require_once __DIR__ . '/functions/add.php';
                                     <option value="Female">Female</option>
                                 </select>
                             </div>
-                            <!-- Options come from the `section` table (includes/sections.php) -->
-                            <div class="col-md-4 mb-3">
-                                <select id="section" class="form-select" name="section_id" aria-label="Default select example">
-                                    <option selected disabled value="">Select Section</option>
-                                    <?php foreach ($sections as $sec): ?>
-                                        <option value="<?= (int) $sec['id'] ?>"><?= htmlspecialchars($sec['name']) ?></option>
-                                    <?php endforeach; ?>
-                                </select>
-                            </div>
-                            <!-- Options come from the `grade` table (includes/grades.php) -->
+                            <!-- Options come from the `grade` table (includes/grades.php).
+                                 Picked first because it narrows the Section dropdown below
+                                 (see the grade/section cascade in assets/app.js). -->
                             <div class="col-md-4 mb-3">
                                 <select id="grade" class="form-select" name="grade_id" aria-label="Default select example">
                                     <option selected disabled value="">Select Grade</option>
                                     <?php foreach ($grades as $gr): ?>
                                         <option value="<?= (int) $gr['id'] ?>"><?= htmlspecialchars($gr['name']) ?></option>
+                                    <?php endforeach; ?>
+                                </select>
+                            </div>
+                            <!-- Options come from the `section` table (includes/sections.php).
+                                 data-grade tags each option with its section's grade_id so the
+                                 cascade script can show/hide options to match the picked grade;
+                                 picking a section here also snaps the Grade select above to match. -->
+                            <div class="col-md-4 mb-3">
+                                <select id="section" class="form-select" name="section_id" aria-label="Default select example">
+                                    <option selected disabled value="">Select Section</option>
+                                    <?php foreach ($sections as $sec): ?>
+                                        <option value="<?= (int) $sec['id'] ?>" data-grade="<?= (int) $sec['grade_id'] ?>"><?= htmlspecialchars($sec['name']) ?></option>
                                     <?php endforeach; ?>
                                 </select>
                             </div>

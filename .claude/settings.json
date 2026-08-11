@@ -10,7 +10,9 @@
       "Bash(/c/xampp2/mysql/bin/mysql.exe -u root --password=password ams -e \"SHOW TABLES; DESCRIBE student; SELECT * FROM grade; SELECT id, full_name, section_id, grade_id FROM student LIMIT 5;\")",
       "Bash(php -l c:/xampp2/htdocs/ams2/ams/migrate.php)",
       "Bash(php -l c:/xampp2/htdocs/ams2/ams/grade.php)",
-      "Bash(php -l c:/xampp2/htdocs/ams2/ams/functions/grade.php)"
+      "Bash(php -l c:/xampp2/htdocs/ams2/ams/functions/grade.php)",
+      "Bash(/c/xampp2/mysql/bin/mysql.exe -u root --password=password ams -e \"SHOW TABLES; DESCRIBE section; SELECT * FROM section; SELECT * FROM grade;\")",
+      "Bash(/c/xampp2/mysql/bin/mysql.exe -u root --password=password ams -e \"DESCRIBE section; SELECT s.id, s.name, s.grade_id, g.name AS grade FROM section s JOIN grade g ON g.id = s.grade_id; SELECT id, full_name, section_id, grade_id FROM student LIMIT 5;\")"
     ]
   },
   "enabledPlugins": {

@@ -24,7 +24,22 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $sectionId = isset($_POST['section_id']) ? intval($_POST['section_id']) : 0;
     $gradeId = isset($_POST['grade_id']) ? intval($_POST['grade_id']) : 0;
 
-    if ($id > 0) {
+    // The Grade/Section dropdowns are kept in sync client-side (assets/app.js),
+    // but that's just UX — re-check server-side that the submitted section
+    // actually belongs to the submitted grade, in case JS was bypassed.
+    $sectionBelongsToGrade = false;
+    foreach ($sections as $sec) {
+        if ((int) $sec['id'] === $sectionId && (int) $sec['grade_id'] === $gradeId) {
+            $sectionBelongsToGrade = true;
+            break;
+        }
+    }
+
+    if ($id > 0 && !$sectionBelongsToGrade) {
+        // Skip the update and fall through to the GET-style lookup below,
+        // which reloads the student's real (unchanged) data.
+        $_SESSION['message'] = 'That section does not belong to the selected grade.';
+    } elseif ($id > 0) {
         $stmt = mysqli_prepare($conn, "UPDATE student SET full_name = ?, gender = ?, section_id = ?, grade_id = ? WHERE id = ?");
         if ($stmt) {
             mysqli_stmt_bind_param($stmt, 'ssiii', $full_name, $gender, $sectionId, $gradeId, $id);

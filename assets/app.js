@@ -32,6 +32,7 @@
         var errors = [];
         var full = document.getElementById('full_name');
         var gender = document.getElementById('gender');
+        var grade = document.getElementById('grade');
         var section = document.getElementById('section');
         var allowedGenders = ['Male', 'Female'];
 
@@ -41,9 +42,12 @@
         if (!gender || allowedGenders.indexOf(gender.value) === -1) {
             errors.push('Please select a valid gender.');
         }
-        // Section options are loaded from the database (section table), so
-        // the client can only check that something was picked; the server
-        // validates the id is a real section.
+        // Grade/section options are loaded from the database (grade/section
+        // tables), so the client can only check that something was picked;
+        // the server validates the ids are real and belong together.
+        if (!grade || grade.value === '') {
+            errors.push('Please select a valid grade.');
+        }
         if (!section || section.value === '') {
             errors.push('Please select a valid section.');
         }
@@ -63,6 +67,56 @@
         }
         return true;
     });
+})();
+
+(function () {
+    // add.php / edit.php: keep the Grade and Section dropdowns in sync.
+    // Each <option> in #section carries data-grade="<its grade_id>" (see
+    // includes/sections.php / the section table). Picking a grade hides any
+    // section option that doesn't belong to it; picking a section snaps the
+    // grade dropdown to match. This is purely a UX convenience — the server
+    // (functions/add.php / functions/edit.php) always re-validates that the
+    // submitted section_id and grade_id actually belong together.
+    var gradeSelect = document.getElementById('grade');
+    var sectionSelect = document.getElementById('section');
+    if (!gradeSelect || !sectionSelect) return;
+
+    function filterSectionsByGrade(keepCurrentSelection) {
+        var selectedGrade = gradeSelect.value;
+        var currentValue = sectionSelect.value;
+        var currentStillMatches = false;
+
+        Array.prototype.forEach.call(sectionSelect.options, function (option) {
+            if (option.value === '') return; // always keep the placeholder option
+            var matches = !selectedGrade || option.getAttribute('data-grade') === selectedGrade;
+            option.hidden = !matches;
+            option.disabled = !matches;
+            if (matches && option.value === currentValue) {
+                currentStillMatches = true;
+            }
+        });
+
+        if (!keepCurrentSelection || !currentStillMatches) {
+            sectionSelect.value = '';
+        }
+    }
+
+    gradeSelect.addEventListener('change', function () {
+        filterSectionsByGrade(false);
+    });
+
+    sectionSelect.addEventListener('change', function () {
+        var chosen = sectionSelect.options[sectionSelect.selectedIndex];
+        var chosenGrade = chosen ? chosen.getAttribute('data-grade') : '';
+        if (chosenGrade && gradeSelect.value !== chosenGrade) {
+            gradeSelect.value = chosenGrade;
+            filterSectionsByGrade(true);
+        }
+    });
+
+    // Run once on load: on edit.php this narrows the list to the student's
+    // existing grade while keeping their current section selected.
+    filterSectionsByGrade(true);
 })();
 
 (function () {

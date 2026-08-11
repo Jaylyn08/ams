@@ -29,13 +29,24 @@ if (isset($_POST["save_user"])) {
     // Cross-check the posted IDs against the real list of sections/grades
     // rather than just checking "> 0" — this rejects IDs that don't exist
     // (or were removed) instead of letting a bad FK hit the database.
-    $validSectionIds = array_map('intval', array_column($sections, 'id'));
-    if (!in_array($sectionId, $validSectionIds, true)) {
-        $errors[] = 'Please select a valid section.';
-    }
     $validGradeIds = array_map('intval', array_column($grades, 'id'));
     if (!in_array($gradeId, $validGradeIds, true)) {
         $errors[] = 'Please select a valid grade.';
+    }
+    // The Grade/Section dropdowns are kept in sync client-side (assets/app.js),
+    // but that's just UX — re-check server-side that the submitted section
+    // actually belongs to the submitted grade, in case JS was bypassed.
+    $matchingSection = null;
+    foreach ($sections as $sec) {
+        if ((int) $sec['id'] === $sectionId) {
+            $matchingSection = $sec;
+            break;
+        }
+    }
+    if ($matchingSection === null) {
+        $errors[] = 'Please select a valid section.';
+    } elseif ((int) $matchingSection['grade_id'] !== $gradeId) {
+        $errors[] = 'That section does not belong to the selected grade.';
     }
 
     if (count($errors) > 0) {

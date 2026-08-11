@@ -46,21 +46,24 @@ require_once __DIR__ . '/functions/edit.php';
                                 <option value="Female" <?= $student['gender'] === 'Female' ? 'selected' : '' ?>>Female</option>
                             </select>
                         </div>
-                        <!-- Pre-select the option matching the student's current section_id -->
+                        <!-- Pre-select the option matching the student's current grade_id.
+                             Picked first because it narrows the Section dropdown below
+                             (see the grade/section cascade in assets/app.js). -->
                         <div class="mb-3 col-md-3">
-                            <label class="form-label">Section</label>
-                            <select name="section_id" class="form-select" required>
-                                <?php foreach ($sections as $sec): ?>
-                                    <option value="<?= (int) $sec['id'] ?>" <?= (int) $student['section_id'] === (int) $sec['id'] ? 'selected' : '' ?>><?= htmlspecialchars($sec['name']) ?></option>
+                            <label class="form-label">Grade</label>
+                            <select id="grade" name="grade_id" class="form-select" required>
+                                <?php foreach ($grades as $gr): ?>
+                                    <option value="<?= (int) $gr['id'] ?>" <?= (int) $student['grade_id'] === (int) $gr['id'] ? 'selected' : '' ?>><?= htmlspecialchars($gr['name']) ?></option>
                                 <?php endforeach; ?>
                             </select>
                         </div>
-                        <!-- Pre-select the option matching the student's current grade_id -->
+                        <!-- Pre-select the option matching the student's current section_id.
+                             data-grade tags each option with its section's grade_id for the cascade script. -->
                         <div class="mb-3 col-md-3">
-                            <label class="form-label">Grade</label>
-                            <select name="grade_id" class="form-select" required>
-                                <?php foreach ($grades as $gr): ?>
-                                    <option value="<?= (int) $gr['id'] ?>" <?= (int) $student['grade_id'] === (int) $gr['id'] ? 'selected' : '' ?>><?= htmlspecialchars($gr['name']) ?></option>
+                            <label class="form-label">Section</label>
+                            <select id="section" name="section_id" class="form-select" required>
+                                <?php foreach ($sections as $sec): ?>
+                                    <option value="<?= (int) $sec['id'] ?>" data-grade="<?= (int) $sec['grade_id'] ?>" <?= (int) $student['section_id'] === (int) $sec['id'] ? 'selected' : '' ?>><?= htmlspecialchars($sec['name']) ?></option>
                                 <?php endforeach; ?>
                             </select>
                         </div>
