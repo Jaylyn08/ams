@@ -1,5 +1,6 @@
 <?php
 require_once __DIR__ . '/includes/auth.php';
+require_once __DIR__ . '/functions/index.php';
 ?>
 
 
@@ -21,8 +22,11 @@ require_once __DIR__ . '/includes/auth.php';
     <div class="page-center" style="min-height:auto;padding:30px;">
       <div class="wrap" style="max-width:900px;width:100%;padding:32px;">
         <h3 style="margin-top:0;">Welcome, <?= htmlspecialchars($_SESSION['user_name']); ?>!</h3>
-        <p class="note">You are signed in as <strong><?= $isAdmin ? 'Administrator' : 'User'; ?></strong>.</p>
-        <a href="logout.php">Logout</a>
+
+        <div class="summary-card" style="max-width:220px;margin:20px 0;">
+          <h6>Total Students</h6>
+          <div class="summary-value"><?= $totalStudents ?></div>
+        </div>
       </div>
     </div>
   </div>
