@@ -120,6 +120,8 @@ require_once __DIR__ . '/functions/student.php';
                                         <td><?= $user['full_name']; ?></td>
                                         <td><?= $user['gender']; ?></td>
                                         <td><?= $user['section']; ?></td>
+                                        <!-- $user['grade'] comes from the JOIN on the `grade` table in
+                                             functions/student.php's $query, not a separate lookup -->
                                         <td><?= $user['grade']; ?></td>
                                         <td>
                                             <div class="d-flex gap-2 align-items-center flex-wrap">

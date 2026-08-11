@@ -1,4 +1,8 @@
 <?php
+// "Add Student" page. auth.php requires a logged-in user; functions/add.php
+// does the actual validation + INSERT and exposes $sections/$grades for the
+// dropdowns below (and echoes error/success alerts inline when the form is
+// submitted back to this same page).
 require_once __DIR__ . '/includes/auth.php';
 require_once __DIR__ . '/functions/add.php';
 ?>
@@ -49,6 +53,7 @@ require_once __DIR__ . '/functions/add.php';
                                     <option value="Female">Female</option>
                                 </select>
                             </div>
+                            <!-- Options come from the `section` table (includes/sections.php) -->
                             <div class="col-md-4 mb-3">
                                 <select id="section" class="form-select" name="section_id" aria-label="Default select example">
                                     <option selected disabled value="">Select Section</option>
@@ -57,6 +62,7 @@ require_once __DIR__ . '/functions/add.php';
                                     <?php endforeach; ?>
                                 </select>
                             </div>
+                            <!-- Options come from the `grade` table (includes/grades.php) -->
                             <div class="col-md-4 mb-3">
                                 <select id="grade" class="form-select" name="grade_id" aria-label="Default select example">
                                     <option selected disabled value="">Select Grade</option>

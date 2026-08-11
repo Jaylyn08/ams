@@ -1,4 +1,9 @@
 <?php
+// Backend for add.php. Loads the section/grade dropdown options, and if the
+// form was submitted (save_user is set), validates the input and inserts a
+// new student row. Success/error alerts are echoed directly into the page
+// (add.php includes this file inline, above the form markup).
+
 require_once __DIR__ . '/../includes/db.php';
 require_once __DIR__ . '/../includes/sections.php';
 require_once __DIR__ . '/../includes/grades.php';
@@ -21,6 +26,9 @@ if (isset($_POST["save_user"])) {
     if (!in_array($gender, $allowedGenders, true)) {
         $errors[] = 'Please select a valid gender.';
     }
+    // Cross-check the posted IDs against the real list of sections/grades
+    // rather than just checking "> 0" — this rejects IDs that don't exist
+    // (or were removed) instead of letting a bad FK hit the database.
     $validSectionIds = array_map('intval', array_column($sections, 'id'));
     if (!in_array($sectionId, $validSectionIds, true)) {
         $errors[] = 'Please select a valid section.';

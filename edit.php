@@ -1,4 +1,8 @@
 <?php
+// "Edit Student" page. Loaded either as edit.php?id=N (GET, to show the
+// form) or as a POST target from its own form (to save). functions/edit.php
+// resolves $student (null if the id doesn't exist) plus $sections/$grades
+// for the dropdowns.
 require_once __DIR__ . '/includes/auth.php';
 require_once __DIR__ . '/functions/edit.php';
 ?>
@@ -27,6 +31,8 @@ require_once __DIR__ . '/functions/edit.php';
             </div>
             <div class="card-body">
                 <?php if ($student): ?>
+                    <!-- id travels as a hidden field so the POST handler in
+                         functions/edit.php knows which student row to update -->
                     <form action="edit.php" method="post">
                         <input type="hidden" name="id" value="<?= $student['id'] ?>">
                         <div class="mb-1 col-md-8">
@@ -40,6 +46,7 @@ require_once __DIR__ . '/functions/edit.php';
                                 <option value="Female" <?= $student['gender'] === 'Female' ? 'selected' : '' ?>>Female</option>
                             </select>
                         </div>
+                        <!-- Pre-select the option matching the student's current section_id -->
                         <div class="mb-3 col-md-3">
                             <label class="form-label">Section</label>
                             <select name="section_id" class="form-select" required>
@@ -48,6 +55,7 @@ require_once __DIR__ . '/functions/edit.php';
                                 <?php endforeach; ?>
                             </select>
                         </div>
+                        <!-- Pre-select the option matching the student's current grade_id -->
                         <div class="mb-3 col-md-3">
                             <label class="form-label">Grade</label>
                             <select name="grade_id" class="form-select" required>

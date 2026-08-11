@@ -1,10 +1,13 @@
 <?php
 require_once __DIR__ . '/../includes/db.php';
 require_once __DIR__ . '/../includes/sections.php';
-require_once __DIR__ . '/../includes/grades.php';
 
 $sections = getSections($conn);
 $sectionNames = array_column($sections, 'name');
+// Note: the student list below shows each student's grade name via a SQL
+// JOIN on the `grade` table directly (see $query), not through the
+// includes/grades.php helper — there's no grade-based filter/stat cards
+// yet (those are still section-only).
 
 // Handle delete via GET (simple confirmation link)
 if (isset($_GET['delete_id'])) {
@@ -130,6 +133,8 @@ if ($filterSection !== '') {
 if ($filterGender !== '') {
     $where[] = "s.gender='" . mysqli_real_escape_string($conn, $filterGender) . "'";
 }
+// Joins in both section and grade names so the listing table (student.php)
+// can display them without a second query per row.
 $query = "SELECT s.*, sec.name AS section, g.name AS grade FROM student s JOIN section sec ON sec.id = s.section_id JOIN grade g ON g.id = s.grade_id";
 if (!empty($where)) {
     $query .= ' WHERE ' . implode(' AND ', $where);

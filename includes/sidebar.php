@@ -4,11 +4,13 @@
 //   $isAdmin (bool) and $currentUserName (string).
 $currentPage = basename($_SERVER['SCRIPT_NAME']);
 
+// Links every logged-in user sees.
 $sidebarLinks = [
     ['href' => 'index.php', 'label' => 'Home'],
     ['href' => 'student.php', 'label' => 'Student'],
     ['href' => 'report.php', 'label' => 'Report'],
 ];
+// Admin-only links, appended so they always render after the ones above.
 if (!empty($isAdmin)) {
     $sidebarLinks[] = ['href' => 'admin.php', 'label' => 'Users'];
     $sidebarLinks[] = ['href' => 'section.php', 'label' => 'Sections'];
@@ -24,6 +26,7 @@ if (!empty($isAdmin)) {
     </div>
     <div class="sidebar-links">
         <?php foreach ($sidebarLinks as $link): ?>
+            <!-- Highlights the link matching the page currently being viewed -->
             <a class="sidebar-link<?= $currentPage === $link['href'] ? ' active' : '' ?>" href="<?= htmlspecialchars($link['href']) ?>"><?= htmlspecialchars($link['label']) ?></a>
         <?php endforeach; ?>
     </div>
