@@ -1,44 +1,6 @@
 <?php
-require_once __DIR__ . '/includes/db.php';
 session_start();
-
-$id = isset($_GET['id']) ? intval($_GET['id']) : 0;
-if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $id = isset($_POST['id']) ? intval($_POST['id']) : 0;
-    $full_name = trim($_POST['full_name'] ?? '');
-    $gender = $_POST['gender'] ?? '';
-    $section = $_POST['section'] ?? '';
-
-    if ($id > 0) {
-        $stmt = mysqli_prepare($conn, "UPDATE student SET full_name = ?, gender = ?, section = ? WHERE id = ?");
-        if ($stmt) {
-            mysqli_stmt_bind_param($stmt, 'sssi', $full_name, $gender, $section, $id);
-            if (mysqli_stmt_execute($stmt)) {
-                $_SESSION['message'] = 'Student updated successfully.';
-                mysqli_stmt_close($stmt);
-                header('Location: student.php');
-                exit;
-            } else {
-                $_SESSION['message'] = 'Unable to update student.';
-                mysqli_stmt_close($stmt);
-            }
-        }
-    }
-}
-
-$student = null;
-if ($id > 0) {
-    $q = mysqli_prepare($conn, "SELECT id, full_name, gender, section FROM student WHERE id = ? LIMIT 1");
-    if ($q) {
-        mysqli_stmt_bind_param($q, 'i', $id);
-        mysqli_stmt_execute($q);
-        $res = mysqli_stmt_get_result($q);
-        if ($res && mysqli_num_rows($res) > 0) {
-            $student = mysqli_fetch_assoc($res);
-        }
-        mysqli_stmt_close($q);
-    }
-}
+require_once __DIR__ . '/functions/edit.php';
 ?>
 
 <!doctype html>
@@ -47,7 +9,7 @@ if ($id > 0) {
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="assets/style.css">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <title>Edit Student</title>
 </head>
