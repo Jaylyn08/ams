@@ -47,10 +47,11 @@ require_once __DIR__ . '/functions/add.php';
                                 </select>
                             </div>
                             <div class="col-md-4 mb-3">
-                                <select id="section" class="form-select" name="section" aria-label="Default select example">
+                                <select id="section" class="form-select" name="section_id" aria-label="Default select example">
                                     <option selected disabled value="">Select Section</option>
-                                    <option value="Gumamela">Gumamela</option>
-                                    <option value="Tulip">Tulip</option>
+                                    <?php foreach ($sections as $sec): ?>
+                                        <option value="<?= (int) $sec['id'] ?>"><?= htmlspecialchars($sec['name']) ?></option>
+                                    <?php endforeach; ?>
                                 </select>
                             </div>
 

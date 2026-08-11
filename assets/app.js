@@ -34,7 +34,6 @@
         var gender = document.getElementById('gender');
         var section = document.getElementById('section');
         var allowedGenders = ['Male', 'Female'];
-        var allowedSections = ['Gumamela', 'Tulip'];
 
         if (!full || full.value.trim() === '') {
             errors.push('Full name is required.');
@@ -42,7 +41,10 @@
         if (!gender || allowedGenders.indexOf(gender.value) === -1) {
             errors.push('Please select a valid gender.');
         }
-        if (!section || allowedSections.indexOf(section.value) === -1) {
+        // Section options are loaded from the database (section table), so
+        // the client can only check that something was picked; the server
+        // validates the id is a real section.
+        if (!section || section.value === '') {
             errors.push('Please select a valid section.');
         }
 

@@ -42,9 +42,10 @@ require_once __DIR__ . '/functions/edit.php';
                         </div>
                         <div class="mb-3 col-md-3">
                             <label class="form-label">Section</label>
-                            <select name="section" class="form-select" required>
-                                <option value="Gumamela" <?= $student['section'] === 'Gumamela' ? 'selected' : '' ?>>Gumamela</option>
-                                <option value="Tulip" <?= $student['section'] === 'Tulip' ? 'selected' : '' ?>>Tulip</option>
+                            <select name="section_id" class="form-select" required>
+                                <?php foreach ($sections as $sec): ?>
+                                    <option value="<?= (int) $sec['id'] ?>" <?= (int) $student['section_id'] === (int) $sec['id'] ? 'selected' : '' ?>><?= htmlspecialchars($sec['name']) ?></option>
+                                <?php endforeach; ?>
                             </select>
                         </div>
                         <div class="mb-3">

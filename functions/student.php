@@ -1,5 +1,9 @@
 <?php
 require_once __DIR__ . '/../includes/db.php';
+require_once __DIR__ . '/../includes/sections.php';
+
+$sections = getSections($conn);
+$sectionNames = array_column($sections, 'name');
 
 // Handle delete via GET (simple confirmation link)
 if (isset($_GET['delete_id'])) {
@@ -49,9 +53,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['student_ids']) && is_
     }
 
     $section = $_POST['section'] ?? '';
-    $allowedSections = ['Gumamela', 'Tulip'];
-    if (!in_array($section, $allowedSections, true)) {
-        $_SESSION['message'] = 'Please select Gumamela or Tulip before saving attendance.';
+    if (!in_array($section, $sectionNames, true)) {
+        $_SESSION['message'] = 'Please select a section before saving attendance.';
         $sectionParam = isset($_POST['section']) ? '&section=' . urlencode($_POST['section']) : '';
         $genderParam = isset($_POST['gender']) ? '&gender=' . urlencode($_POST['gender']) : '';
         header('Location: student.php?' . ltrim($sectionParam . $genderParam, '&'));
@@ -63,7 +66,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['student_ids']) && is_
     $validIds = [];
     if (!empty($studentIds)) {
         $idList = implode(',', $studentIds);
-        $validQuery = "SELECT id FROM student WHERE section = '" . $safeSection . "' AND id IN (" . $idList . ")";
+        $validQuery = "SELECT s.id FROM student s JOIN section sec ON sec.id = s.section_id WHERE sec.name = '" . $safeSection . "' AND s.id IN (" . $idList . ")";
         $validResult = mysqli_query($conn, $validQuery);
         if ($validResult) {
             while ($row = mysqli_fetch_assoc($validResult)) {
@@ -106,9 +109,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['student_ids']) && is_
 
 $filterSection = $_GET['section'] ?? '';
 $filterGender = $_GET['gender'] ?? '';
-$allowedSections = ['Gumamela', 'Tulip'];
 $allowedGenders = ['Male', 'Female'];
-if (!in_array($filterSection, $allowedSections, true)) {
+if (!in_array($filterSection, $sectionNames, true)) {
     $filterSection = '';
 }
 if (!in_array($filterGender, $allowedGenders, true)) {
@@ -122,19 +124,19 @@ if (preg_match('/^\d{4}-\d{2}-\d{2}$/', $filterAttendanceDate)) {
 
 $where = [];
 if ($filterSection !== '') {
-    $where[] = "section='" . mysqli_real_escape_string($conn, $filterSection) . "'";
+    $where[] = "sec.name='" . mysqli_real_escape_string($conn, $filterSection) . "'";
 }
 if ($filterGender !== '') {
-    $where[] = "gender='" . mysqli_real_escape_string($conn, $filterGender) . "'";
+    $where[] = "s.gender='" . mysqli_real_escape_string($conn, $filterGender) . "'";
 }
-$query = "SELECT * FROM student";
+$query = "SELECT s.*, sec.name AS section FROM student s JOIN section sec ON sec.id = s.section_id";
 if (!empty($where)) {
     $query .= ' WHERE ' . implode(' AND ', $where);
 }
 if ($filterGender === '') {
-    $query .= " ORDER BY CASE WHEN gender='Male' THEN 0 ELSE 1 END, id ASC";
+    $query .= " ORDER BY CASE WHEN s.gender='Male' THEN 0 ELSE 1 END, s.id ASC";
 } else {
-    $query .= ' ORDER BY id ASC';
+    $query .= ' ORDER BY s.id ASC';
 }
 $query_run = mysqli_query($conn, $query);
 
@@ -142,27 +144,27 @@ $attendanceQuery = $attendanceDate !== '' ? '&attendance_date=' . urlencode($att
 $sectionQuery = $filterSection !== '' ? '&section=' . urlencode($filterSection) . $attendanceQuery : $attendanceQuery;
 $genderQuery = $filterGender !== '' ? '&gender=' . urlencode($filterGender) . $attendanceQuery : $attendanceQuery;
 
-$counts = [
-    'Gumamela' => ['Male' => 0, 'Female' => 0],
-    'Tulip' => ['Male' => 0, 'Female' => 0],
-];
-$countQuery = "SELECT section, gender, COUNT(*) AS total FROM student WHERE section IN ('Gumamela', 'Tulip') AND gender IN ('Male', 'Female') GROUP BY section, gender";
+$counts = [];
+foreach ($sectionNames as $sectionName) {
+    $counts[$sectionName] = ['Male' => 0, 'Female' => 0];
+}
+$countQuery = "SELECT sec.name AS section, s.gender, COUNT(*) AS total FROM student s JOIN section sec ON sec.id = s.section_id WHERE s.gender IN ('Male', 'Female') GROUP BY sec.name, s.gender";
 $countResult = mysqli_query($conn, $countQuery);
 if ($countResult) {
     while ($countRow = mysqli_fetch_assoc($countResult)) {
-        $section = $countRow['section'];
+        $countSectionName = $countRow['section'];
         $gender = $countRow['gender'];
-        if (isset($counts[$section][$gender])) {
-            $counts[$section][$gender] = $countRow['total'];
+        if (isset($counts[$countSectionName][$gender])) {
+            $counts[$countSectionName][$gender] = $countRow['total'];
         }
     }
     mysqli_free_result($countResult);
 }
-$sectionTotals = [
-    'Gumamela' => $counts['Gumamela']['Male'] + $counts['Gumamela']['Female'],
-    'Tulip' => $counts['Tulip']['Male'] + $counts['Tulip']['Female'],
-];
-$overallTotal = $sectionTotals['Gumamela'] + $sectionTotals['Tulip'];
+$sectionTotals = [];
+foreach ($counts as $sectionName => $genderCounts) {
+    $sectionTotals[$sectionName] = $genderCounts['Male'] + $genderCounts['Female'];
+}
+$overallTotal = array_sum($sectionTotals);
 
 $attendanceMap = [];
 $attendanceQuery = "SELECT student_id, status FROM attendance WHERE attendance_date = '" . mysqli_real_escape_string($conn, $attendanceDate) . "'";

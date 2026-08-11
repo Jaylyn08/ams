@@ -12,6 +12,16 @@ CREATE TABLE IF NOT EXISTS users (
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
+-- Lookup table for the sections a student can belong to. student.section is
+-- still a hardcoded ENUM for now (kept as-is so existing pages don't break);
+-- this table is the seed for eventually turning that into a proper FK.
+CREATE TABLE IF NOT EXISTS section (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    name VARCHAR(50) NOT NULL UNIQUE
+);
+
+INSERT IGNORE INTO section (name) VALUES ('Gumamela'), ('Tulip');
+
 -- student and attendance were missing from this script even though every
 -- page (add.php, edit.php, report.php, student.php) depends on them.
 -- includes/db.php auto-creates `attendance` once `student` exists, but
@@ -20,8 +30,9 @@ CREATE TABLE IF NOT EXISTS student (
     id INT AUTO_INCREMENT PRIMARY KEY,
     full_name VARCHAR(150) NOT NULL,
     gender ENUM('Male','Female') NOT NULL,
-    section ENUM('Gumamela','Tulip') NOT NULL,
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    section_id INT NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (section_id) REFERENCES section(id)
 );
 
 CREATE TABLE IF NOT EXISTS attendance (

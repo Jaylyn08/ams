@@ -46,8 +46,9 @@ require_once __DIR__ . '/functions/student.php';
                                 <label for="section" class="form-label text-uppercase"><strong>Select Section:</strong></label>
                                 <select id="section" name="section" class="form-select  ">
                                     <option value="" <?= $filterSection === '' ? ' selected' : '' ?>>All</option>
-                                    <option value="Gumamela" <?= $filterSection === 'Gumamela' ? ' selected' : '' ?>>Gumamela</option>
-                                    <option value="Tulip" <?= $filterSection === 'Tulip' ? ' selected' : '' ?>>Tulip</option>
+                                    <?php foreach ($sections as $sec): ?>
+                                        <option value="<?= htmlspecialchars($sec['name']) ?>" <?= $filterSection === $sec['name'] ? ' selected' : '' ?>><?= htmlspecialchars($sec['name']) ?></option>
+                                    <?php endforeach; ?>
                                 </select>
                             </div>
 
