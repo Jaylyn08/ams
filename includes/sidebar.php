@@ -11,6 +11,7 @@ $sidebarLinks = [
 ];
 if (!empty($isAdmin)) {
     $sidebarLinks[] = ['href' => 'admin.php', 'label' => 'Users'];
+    $sidebarLinks[] = ['href' => 'section.php', 'label' => 'Sections'];
 }
 ?>
 <button type="button" id="sidebarToggle" class="sidebar-toggle" aria-label="Toggle navigation" aria-expanded="false" aria-controls="appSidebar">&#9776;</button>

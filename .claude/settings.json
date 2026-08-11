@@ -1,4 +1,12 @@
 {
+  "permissions": {
+    "allow": [
+      "Bash(php -l c:/xampp2/htdocs/ams2/ams/add.php)",
+      "Bash(php -l c:/xampp2/htdocs/ams2/ams/includes/sidebar.php)",
+      "Bash(php -l c:/xampp2/htdocs/ams2/ams/section.php)",
+      "Bash(php -l c:/xampp2/htdocs/ams2/ams/functions/section.php)"
+    ]
+  },
   "enabledPlugins": {
     "fullstack-dev-skills@fullstack-dev-skills": true
   }
