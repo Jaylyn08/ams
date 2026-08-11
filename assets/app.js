@@ -118,3 +118,24 @@
     setInterval(updateClock, 1000);
     updateClock();
 })();
+
+(function () {
+    // includes/sidebar.php: mobile off-canvas toggle
+    var toggle = document.getElementById('sidebarToggle');
+    var sidebar = document.getElementById('appSidebar');
+    var overlay = document.getElementById('sidebarOverlay');
+    if (!toggle || !sidebar || !overlay) return;
+
+    function closeSidebar() {
+        sidebar.classList.remove('open');
+        overlay.classList.remove('open');
+        toggle.setAttribute('aria-expanded', 'false');
+    }
+
+    toggle.addEventListener('click', function () {
+        var isOpen = sidebar.classList.toggle('open');
+        overlay.classList.toggle('open', isOpen);
+        toggle.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
+    });
+    overlay.addEventListener('click', closeSidebar);
+})();

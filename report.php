@@ -1,5 +1,5 @@
 <?php
-session_start();
+require_once __DIR__ . '/includes/auth.php';
 require_once __DIR__ . '/functions/report.php';
 ?>
 
@@ -15,13 +15,9 @@ require_once __DIR__ . '/functions/report.php';
 </head>
 
 <body>
-    <div class="topnav">
-        <a href="index.php">Home</a>
-        <a href="student.php">Student</a>
-        <a class="active" href="report.php">Report</a>
+    <?php include __DIR__ . '/includes/sidebar.php'; ?>
 
-    </div>
-
+    <div class="app-content">
     <div class="container mt-5">
         <div class="card shadow-sm">
             <div class="card-header bg-white d-flex flex-column flex-md-row justify-content-between align-items-start align-items-md-center gap-3">
@@ -140,8 +136,10 @@ require_once __DIR__ . '/functions/report.php';
             </div>
         </div>
     </div>
+    </div>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
+    <script src="assets/app.js"></script>
 </body>
 
 </html>

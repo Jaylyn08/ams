@@ -1,5 +1,5 @@
 <?php
-session_start();
+require_once __DIR__ . '/includes/auth.php';
 require_once __DIR__ . '/functions/student.php';
 ?>
 
@@ -18,13 +18,9 @@ require_once __DIR__ . '/functions/student.php';
 </head>
 
 <body>
+    <?php include __DIR__ . '/includes/sidebar.php'; ?>
 
-    <div class="topnav">
-        <a href="index.php">Home</a>
-        <a class="active" href="student.php">Student</a>
-        <a href="report.php">Report</a>
-    </div>
-
+    <div class="app-content">
     <div id="home" class="page-container container mt-4">
 
         <?php include('message.php'); ?>
@@ -158,6 +154,7 @@ require_once __DIR__ . '/functions/student.php';
         </div>
     </div>
     </div>
+    <!-- closes: .app-content -->
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>

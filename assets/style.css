@@ -37,7 +37,10 @@ input[type=text]:focus,input[type=password]:focus,input[type=email]:focus{outlin
 
 .centered-table{margin-left:auto;margin-right:auto;width:min(100%,1100px);max-width:1100px;}
 
-.page-container{padding-top:90px;margin-left:260px;max-height:100vh}
+.page-container{padding-top:24px;max-height:100vh}
+
+/* Main content area next to the fixed sidebar (see .sidebar below). */
+.app-content{margin-left:260px;min-height:100vh;transition:margin-left .25s ease}
 /*Calendar and clock display styles */
 .calendar-input{max-width:260px;border-radius:12px;}
 .clock-display{font-size:1.5rem;font-weight:700;color:#102a43;padding:12px 16px;border:1px solid rgba(16,42,67,.12);border-radius:14px;background:#f8fbff;display:inline-block;min-width:140px;text-align:center;}
@@ -64,42 +67,122 @@ input[type=text]:focus,input[type=password]:focus,input[type=email]:focus{outlin
 
 
 
-/* index.php reponsive sidebar */
-/* Add a black background color to the top navigation */
-.topnav {
-  overflow: hidden;
-  position: fixed;     /* keeps it stuck at the top */
-  top: 0;              /* aligns to the very top */
-  left: 0;             /* aligns to the left edge */
-  width: 100%;         /* full width across the page */
-  display: flex;       /* aligns items horizontally */
-  justify-content: center; /* optional: center the buttons */
-  background: #333;    /* background color */
-  z-index: 1000;       /* ensures it stays above other elements */
+/* Shared left sidebar (includes/sidebar.php), used on every authenticated page. */
+.sidebar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 260px;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  background: #102a43;
+  color: #f2f6fb;
+  z-index: 1000;
+  overflow-y: auto;
+  transition: transform .25s ease;
 }
 
-/* Style the links inside the navigation bar */
-.topnav a {
-  float: left;
-  color: #f2f2f2;
-  text-align: center;
-  padding: 14px;
+.sidebar-brand {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 22px 20px;
+  font-size: 19px;
+  font-weight: 700;
+  letter-spacing: .04em;
+  border-bottom: 1px solid rgba(255,255,255,.08);
+}
+
+.sidebar-logo {
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+.sidebar-links {
+  display: flex;
+  flex-direction: column;
+  padding: 16px 12px;
+  gap: 4px;
+  flex: 1;
+}
+
+.sidebar-link {
+  display: block;
+  padding: 12px 16px;
+  border-radius: 12px;
+  color: #cbd5e1;
   text-decoration: none;
-  font-size: 17px;
-  flex: 1;             /* makes each button stretch evenly */
+  font-size: 15px;
+  transition: background .2s, color .2s;
 }
 
-/* Change the color of links on hover */
-.topnav a:hover {
-  background-color: #ddd;
-  color: black;
+.sidebar-link:hover {
+  background: rgba(255,255,255,.08);
+  color: #fff;
 }
 
-/* Add a color to the active/current link */
-.topnav a.active {
-  background-color: #04AA6D;
-  color: white;
+.sidebar-link.active {
+  background: var(--accent);
+  color: #fff;
+  font-weight: 600;
 }
+
+.sidebar-footer {
+  padding: 16px 20px 22px;
+  border-top: 1px solid rgba(255,255,255,.08);
+}
+
+.sidebar-user {
+  font-size: 13px;
+  color: #94a3b8;
+  margin-bottom: 10px;
+  word-break: break-word;
+}
+
+.sidebar-logout {
+  color: #fca5a5;
+}
+
+.sidebar-logout:hover {
+  background: rgba(220,38,38,.15);
+  color: #fecaca;
+}
+
+.sidebar-toggle {
+  display: none;
+  position: fixed;
+  top: 14px;
+  left: 14px;
+  z-index: 1100;
+  width: 42px;
+  height: 42px;
+  border-radius: 10px;
+  border: none;
+  background: #102a43;
+  color: #fff;
+  font-size: 20px;
+  cursor: pointer;
+}
+
+.sidebar-overlay {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(15,23,42,.5);
+  z-index: 999;
+}
+
+@media (max-width: 960px) {
+  .sidebar-toggle { display: block; }
+  .sidebar { transform: translateX(-100%); }
+  .sidebar.open { transform: translateX(0); }
+  .sidebar-overlay.open { display: block; }
+  .app-content { margin-left: 0; padding-top: 64px; }
+}
+
 /*avatar img */
 .avatar {
   vertical-align: middle;

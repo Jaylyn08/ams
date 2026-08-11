@@ -1,5 +1,5 @@
 <?php
-session_start();
+require_once __DIR__ . '/includes/auth.php';
 require_once __DIR__ . '/functions/edit.php';
 ?>
 
@@ -15,6 +15,9 @@ require_once __DIR__ . '/functions/edit.php';
 </head>
 
 <body>
+    <?php include __DIR__ . '/includes/sidebar.php'; ?>
+
+    <div class="app-content">
     <div class="container mt-4">
         <?php include('message.php'); ?>
         <div class="card col-md-8 mx-auto">
@@ -54,6 +57,8 @@ require_once __DIR__ . '/functions/edit.php';
             </div>
         </div>
     </div>
+    </div>
+    <script src="assets/app.js"></script>
 </body>
 
 </html>

@@ -1,6 +1,5 @@
 <?php
-session_start();
-require_once __DIR__ . '/functions/index.php';
+require_once __DIR__ . '/includes/auth.php';
 ?>
 
 
@@ -16,23 +15,21 @@ require_once __DIR__ . '/functions/index.php';
 </head>
 
 <body>
-  <div class="topnav" style="position:relative;max-width:none;margin-top:0;">
-    <a class="active" href="index.php">Home</a>
-    <a href="student.php">Student</a>
-    <a href="report.php">Report</a>
-    <?php if ($isAdmin): ?><a href="admin.php">Admin Panel</a><?php endif; ?>
-  </div>
+  <?php include __DIR__ . '/includes/sidebar.php'; ?>
 
-  <div class="page-center" style="min-height:auto;padding:30px;">
-    <div class="wrap" style="max-width:900px;width:100%;padding:32px;">
-      <h3 style="margin-top:0;">Welcome, <?= htmlspecialchars($_SESSION['user_name']); ?>!</h3>
-      <p class="note">You are signed in as <strong><?= $isAdmin ? 'Administrator' : 'User'; ?></strong>.</p>
-      <a href="logout.php">Logout</a>
+  <div class="app-content">
+    <div class="page-center" style="min-height:auto;padding:30px;">
+      <div class="wrap" style="max-width:900px;width:100%;padding:32px;">
+        <h3 style="margin-top:0;">Welcome, <?= htmlspecialchars($_SESSION['user_name']); ?>!</h3>
+        <p class="note">You are signed in as <strong><?= $isAdmin ? 'Administrator' : 'User'; ?></strong>.</p>
+        <a href="logout.php">Logout</a>
+      </div>
     </div>
   </div>
   <!-- Optional JavaScript; choose one of the two! -->
   <!-- Option 1: Bootstrap Bundle with Popper -->
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
+  <script src="assets/app.js"></script>
 </body>
 
 </html>
