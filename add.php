@@ -57,6 +57,14 @@ require_once __DIR__ . '/functions/add.php';
                                     <?php endforeach; ?>
                                 </select>
                             </div>
+                            <div class="col-md-4 mb-3">
+                                <select id="grade" class="form-select" name="grade_id" aria-label="Default select example">
+                                    <option selected disabled value="">Select Grade</option>
+                                    <?php foreach ($grades as $gr): ?>
+                                        <option value="<?= (int) $gr['id'] ?>"><?= htmlspecialchars($gr['name']) ?></option>
+                                    <?php endforeach; ?>
+                                </select>
+                            </div>
 
                             <div class="mb-3">
                                 <button type="submit" name="save_user" class="btn btn-primary">Save</button>

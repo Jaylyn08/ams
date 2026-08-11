@@ -56,7 +56,7 @@ try {
                 <?php else: ?>
                     <div class="error"><?= htmlspecialchars($messages[0]) ?></div>
                 <?php endif; ?>
-                <p class="note" style="margin-top:20px;">This runs <code>sql/setup.sql</code> against your database — creates any missing tables and migrates older ones (like the old <code>student.section</code> column) to the current schema.</p>
+                <p class="note" style="margin-top:20px;">This runs <code>sql/setup.sql</code> against your database — creates any missing tables (including <code>grade</code>) and migrates older ones (like the old <code>student.section</code> column, or adding <code>student.grade_id</code>) to the current schema.</p>
                 <a href="index.php">Back to dashboard</a>
             </div>
         </div>

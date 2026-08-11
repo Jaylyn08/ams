@@ -1,6 +1,7 @@
 <?php
 require_once __DIR__ . '/../includes/db.php';
 require_once __DIR__ . '/../includes/sections.php';
+require_once __DIR__ . '/../includes/grades.php';
 
 $sections = getSections($conn);
 $sectionNames = array_column($sections, 'name');
@@ -129,7 +130,7 @@ if ($filterSection !== '') {
 if ($filterGender !== '') {
     $where[] = "s.gender='" . mysqli_real_escape_string($conn, $filterGender) . "'";
 }
-$query = "SELECT s.*, sec.name AS section FROM student s JOIN section sec ON sec.id = s.section_id";
+$query = "SELECT s.*, sec.name AS section, g.name AS grade FROM student s JOIN section sec ON sec.id = s.section_id JOIN grade g ON g.id = s.grade_id";
 if (!empty($where)) {
     $query .= ' WHERE ' . implode(' AND ', $where);
 }

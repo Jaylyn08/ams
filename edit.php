@@ -48,6 +48,14 @@ require_once __DIR__ . '/functions/edit.php';
                                 <?php endforeach; ?>
                             </select>
                         </div>
+                        <div class="mb-3 col-md-3">
+                            <label class="form-label">Grade</label>
+                            <select name="grade_id" class="form-select" required>
+                                <?php foreach ($grades as $gr): ?>
+                                    <option value="<?= (int) $gr['id'] ?>" <?= (int) $student['grade_id'] === (int) $gr['id'] ? 'selected' : '' ?>><?= htmlspecialchars($gr['name']) ?></option>
+                                <?php endforeach; ?>
+                            </select>
+                        </div>
                         <div class="mb-3">
                             <button type="submit" class="btn btn-primary col-md-3">Save Changes</button>
                         </div>

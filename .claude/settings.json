@@ -4,7 +4,11 @@
       "Bash(php -l c:/xampp2/htdocs/ams2/ams/add.php)",
       "Bash(php -l c:/xampp2/htdocs/ams2/ams/includes/sidebar.php)",
       "Bash(php -l c:/xampp2/htdocs/ams2/ams/section.php)",
-      "Bash(php -l c:/xampp2/htdocs/ams2/ams/functions/section.php)"
+      "Bash(php -l c:/xampp2/htdocs/ams2/ams/functions/section.php)",
+      "Bash(/c/xampp2/mysql/bin/mysql.exe -u root --password=password -e \"SELECT 1\")",
+      "Bash(/c/xampp2/mysql/bin/mysql.exe -u root --password=password)",
+      "Bash(/c/xampp2/mysql/bin/mysql.exe -u root --password=password ams -e \"SHOW TABLES; DESCRIBE student; SELECT * FROM grade; SELECT id, full_name, section_id, grade_id FROM student LIMIT 5;\")",
+      "Bash(php -l c:/xampp2/htdocs/ams2/ams/migrate.php)"
     ]
   },
   "enabledPlugins": {

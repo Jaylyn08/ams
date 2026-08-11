@@ -28,16 +28,28 @@ CREATE TABLE IF NOT EXISTS section (
 
 INSERT IGNORE INTO section (name) VALUES ('Gumamela'), ('Tulip');
 
--- Creates `student` from scratch (with section_id already in place) if it
--- doesn't exist yet. If it already exists — with or without section_id —
--- this is a no-op; the migration block below handles the old-schema case.
+-- Lookup table for the grade levels a student can belong to. Add a row here
+-- and it shows up in every dropdown/filter in the app automatically.
+CREATE TABLE IF NOT EXISTS grade (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    name VARCHAR(50) NOT NULL UNIQUE
+);
+
+INSERT IGNORE INTO grade (name) VALUES ('Grade 1'), ('Grade 2');
+
+-- Creates `student` from scratch (with section_id/grade_id already in
+-- place) if it doesn't exist yet. If it already exists — with or without
+-- those columns — this is a no-op; the migration blocks below handle the
+-- old-schema cases.
 CREATE TABLE IF NOT EXISTS student (
     id INT AUTO_INCREMENT PRIMARY KEY,
     full_name VARCHAR(150) NOT NULL,
     gender ENUM('Male','Female') NOT NULL,
     section_id INT NOT NULL,
+    grade_id INT NOT NULL,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    FOREIGN KEY (section_id) REFERENCES section(id)
+    FOREIGN KEY (section_id) REFERENCES section(id),
+    FOREIGN KEY (grade_id) REFERENCES grade(id)
 );
 
 -- --- Migration: student.section (ENUM) -> student.section_id (FK) ---
@@ -74,6 +86,35 @@ PREPARE stmt FROM @sql; EXECUTE stmt; DEALLOCATE PREPARE stmt;
 
 SET @sql := IF(@needs_migration,
     'ALTER TABLE student DROP COLUMN section',
+    'SELECT 1');
+PREPARE stmt FROM @sql; EXECUTE stmt; DEALLOCATE PREPARE stmt;
+-- --- end migration ---
+
+-- --- Migration: add student.grade_id to existing installs ---
+-- On a fresh install `student` is already created with grade_id above, so
+-- this resolves to harmless 'SELECT 1' no-ops there.
+SET @needs_grade_migration := (
+    (SELECT COUNT(*) FROM information_schema.COLUMNS
+     WHERE table_schema = DATABASE() AND table_name = 'student' AND column_name = 'grade_id') = 0
+);
+
+SET @sql := IF(@needs_grade_migration,
+    'ALTER TABLE student ADD COLUMN grade_id INT NULL AFTER section_id',
+    'SELECT 1');
+PREPARE stmt FROM @sql; EXECUTE stmt; DEALLOCATE PREPARE stmt;
+
+SET @sql := IF(@needs_grade_migration,
+    'UPDATE student SET grade_id = (SELECT MIN(id) FROM grade) WHERE grade_id IS NULL',
+    'SELECT 1');
+PREPARE stmt FROM @sql; EXECUTE stmt; DEALLOCATE PREPARE stmt;
+
+SET @sql := IF(@needs_grade_migration,
+    'ALTER TABLE student MODIFY grade_id INT NOT NULL',
+    'SELECT 1');
+PREPARE stmt FROM @sql; EXECUTE stmt; DEALLOCATE PREPARE stmt;
+
+SET @sql := IF(@needs_grade_migration,
+    'ALTER TABLE student ADD CONSTRAINT fk_student_grade FOREIGN KEY (grade_id) REFERENCES grade(id)',
     'SELECT 1');
 PREPARE stmt FROM @sql; EXECUTE stmt; DEALLOCATE PREPARE stmt;
 -- --- end migration ---

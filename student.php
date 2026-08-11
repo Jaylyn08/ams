@@ -106,6 +106,7 @@ require_once __DIR__ . '/functions/student.php';
                                 <th style="padding:12px 14px;border-bottom:1px solid #dbe7f0;">Full Name</th>
                                 <th style="padding:12px 14px;border-bottom:1px solid #dbe7f0;">Gender</th>
                                 <th style="padding:12px 14px;border-bottom:1px solid #dbe7f0;">Section</th>
+                                <th style="padding:12px 14px;border-bottom:1px solid #dbe7f0;">Grade</th>
                                 <th style="padding:12px 14px;border-bottom:1px solid #dbe7f0;">Attendance</th>
                                 <th style="padding:12px 14px;border-bottom:1px solid #dbe7f0;">Manage</th>
                             </tr>
@@ -119,6 +120,7 @@ require_once __DIR__ . '/functions/student.php';
                                         <td><?= $user['full_name']; ?></td>
                                         <td><?= $user['gender']; ?></td>
                                         <td><?= $user['section']; ?></td>
+                                        <td><?= $user['grade']; ?></td>
                                         <td>
                                             <div class="d-flex gap-2 align-items-center flex-wrap">
                                                 <div class="form-check mb-0 ">
