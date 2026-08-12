@@ -32,7 +32,7 @@ if (!empty($isAdmin)) {
     </div>
     <div class="sidebar-footer">
         <?php if ($currentUserName !== ''): ?>
-            <div class="sidebar-user"><?= htmlspecialchars($currentUserName) ?></div>
+            <div class="sidebar-user text-uppercase"><?= htmlspecialchars($currentUserName) ?></div>
         <?php endif; ?>
         <a class="sidebar-link sidebar-logout" href="logout.php">Logout</a>
     </div>
