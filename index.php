@@ -21,27 +21,31 @@ require_once __DIR__ . '/functions/student.php';
 
   <div class="app-content">
     <div class="page-center" style="min-height:auto;padding:30px;">
+
       <div class="wrap" style="max-width:900px;width:100%;padding:32px;">
         <div class="d-flex justify-content-between align-items-center" style="margin-top:0;">
           <h3 class="mb-0">Welcome, <?= htmlspecialchars($_SESSION['user_name']); ?>!</h3>
           <div id="dateTimeDisplay" class="text-muted">Philippine Standard Time: <?= $manilaFormatted ?></div>
         </div>
+        <div class="summary-cards d-flex flex-wrap gap-3" style="margin-top:px;">
+          <div class="summary-card " style="max-width:220px;margin:20px 0;">
+            <h6>Section: Gumamela</h6>
+            <div class="summary-value"><?= $sectionTotals['Gumamela'] ?></div>
+          </div>
 
-        <div class="summary-card " style="max-width:220px;margin:20px 0;">
-          <h6>Section: Gumamela</h6>
-          <div class="summary-value"><?= $sectionTotals['Gumamela'] ?></div>
-        </div>
+          <div class="summary-card" style="max-width:220px;margin:20px 0;">
+            <h6>Section: Tulip </h6>
+            <div class="summary-value"><?= $sectionTotals['Tulip'] ?></div>
+          </div>
 
-        <div class="summary-card" style="max-width:220px;margin:20px 0;">
-          <h6>Section: Tulip </h6>
-          <div class="summary-value"><?= $sectionTotals['Tulip'] ?></div>
+          
         </div>
-        
         <div class="summary-card" style="max-width:220px;margin:20px 0;">
-          <h6>Total Students</h6>
-          <div class="summary-value"><?= $totalStudents ?></div>
-        </div>
+            <h6>Total Students</h6>
+            <div class="summary-value"><?= $totalStudents ?></div>
+          </div>
       </div>
+
     </div>
     <!-- Optional JavaScript; choose one of the two! -->
     <!-- Option 1: Bootstrap Bundle with Popper -->
