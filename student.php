@@ -91,6 +91,7 @@ require_once __DIR__ . '/functions/student.php';
                         <table class="table table-bordered table-striped centered-table">
                             <thead>
                                 <tr style="background:rgba(75,124,236,.08);text-align:left;">
+                                    <th style="padding:12px 14px;border-bottom:1px solid #dbe7f0; width:60px;">#</th>
                                     <th style="padding:12px 14px;border-bottom:1px solid #dbe7f0;">Full Name</th>
                                     <th style="padding:12px 14px;border-bottom:1px solid #dbe7f0;">Gender</th>
                                     <th style="padding:12px 14px;border-bottom:1px solid #dbe7f0;">Section</th>
@@ -102,9 +103,11 @@ require_once __DIR__ . '/functions/student.php';
                             <tbody>
                                 <?php
                                 if ($query_run && mysqli_num_rows($query_run) > 0) {
+                                    $rowNumber = isset($startIndex) ? $startIndex : 1;
                                     foreach ($query_run as $user) {
                                 ?>
                                         <tr>
+                                            <td><?= $rowNumber++; ?></td>
                                             <td><?= $user['full_name']; ?></td>
                                             <td><?= $user['gender']; ?></td>
                                             <td><?= $user['section']; ?></td>
@@ -152,29 +155,7 @@ require_once __DIR__ . '/functions/student.php';
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
     <script src="assets/app.js"></script>
-    <script>
-        // auto-submit when page select or page_size changes
-        (function() {
-            var pageSelect = document.getElementById('page');
-            var pageSize = document.getElementById('page_size');
-            var form = document.querySelector('form[method="get"]');
-            if (pageSelect) {
-                pageSelect.addEventListener('change', function() {
-                    form.submit();
-                });
-            }
-            if (pageSize) {
-                pageSize.addEventListener('change', function() {
-                    // reset to first page when page size changes
-                    var pageInput = document.querySelector('select[name="page"]');
-                    if (pageInput) {
-                        pageInput.value = 1;
-                    }
-                    form.submit();
-                });
-            }
-        })();
-    </script>
+    <!-- attendance persistence moved to assets/app.js -->
 
 </body>
 

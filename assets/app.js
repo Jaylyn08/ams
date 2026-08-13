@@ -156,6 +156,167 @@
         });
     }
 
+    // Attendance selection persistence across paginated pages.
+    (function() {
+        var getKey = function() {
+            var sectionEl = document.querySelector('input[name="section"]') || document.getElementById('section');
+            var section = sectionEl ? (sectionEl.value || '') : '';
+            var dateEl = document.querySelector('input[name="attendance_date"]');
+            var date = dateEl ? (dateEl.value || '') : '';
+            return 'attendance:' + section + ':' + date;
+        };
+
+        var loadData = function() {
+            var key = getKey();
+            try {
+                var raw = localStorage.getItem(key);
+                if (!raw) return { seen: {}, present: {} };
+                return JSON.parse(raw) || { seen: {}, present: {} };
+            } catch (e) {
+                return { seen: {}, present: {} };
+            }
+        };
+
+        var saveData = function(data) {
+            var key = getKey();
+            try { localStorage.setItem(key, JSON.stringify(data)); } catch (e) {}
+        };
+
+        var markSeenFromPage = function() {
+            var data = loadData();
+            document.querySelectorAll('input[type="hidden"][name="student_ids[]"]').forEach(function(h){
+                var id = h.value && String(h.value);
+                if (id) data.seen[id] = true;
+            });
+            saveData(data);
+        };
+
+        var syncVisibleToStorage = function() {
+            var data = loadData();
+            document.querySelectorAll('input[type="hidden"][name="student_ids[]"]').forEach(function(h){
+                var id = h.value && String(h.value);
+                if (id) data.seen[id] = true;
+            });
+            document.querySelectorAll('input[type="checkbox"][id^="present_"]').forEach(function(cb){
+                var id = cb.id.replace('present_', '');
+                if (!id) return;
+                if (cb.checked) {
+                    data.present[id] = true;
+                } else {
+                    delete data.present[id];
+                }
+                data.seen[id] = true;
+            });
+            saveData(data);
+        };
+
+        var restoreFromStorage = function() {
+            var data = loadData();
+            document.querySelectorAll('input[type="checkbox"][id^="present_"]').forEach(function(cb){
+                var id = cb.id.replace('present_', '');
+                if (data.present && data.present[id]) {
+                    cb.checked = true;
+                } else {
+                    cb.checked = false;
+                }
+            });
+            // ensure seen includes all currently-visible ids
+            markSeenFromPage();
+        };
+
+        // Attach change listeners to update storage immediately
+        var attachCheckboxListeners = function() {
+            document.querySelectorAll('input[type="checkbox"][id^="present_"]').forEach(function(cb){
+                cb.addEventListener('change', function() {
+                    syncVisibleToStorage();
+                });
+            });
+        };
+
+        // Before leaving page or navigating, persist current visible selections
+        window.addEventListener('beforeunload', function() {
+            syncVisibleToStorage();
+        });
+
+        var getForm = function() { return document.querySelector('form[method="get"]'); };
+        var getAttendanceForm = function() { return document.getElementById('attendanceForm'); };
+
+        var form = getForm();
+        if (form) {
+            form.addEventListener('submit', function() {
+                syncVisibleToStorage();
+            });
+        }
+
+        // Intercept attendance form submit to include all stored (seen) student ids and statuses
+        var attendanceForm = getAttendanceForm();
+        if (attendanceForm) {
+            attendanceForm.addEventListener('submit', function(e) {
+                // persist visible first
+                syncVisibleToStorage();
+                var data = loadData();
+                // disable visible checkboxes so they don't double-submit
+                document.querySelectorAll('input[type="checkbox"][id^="present_"]').forEach(function(cb){ cb.disabled = true; });
+                // remove existing hidden student_ids[] inputs (they reflect only current page)
+                attendanceForm.querySelectorAll('input[name="student_ids[]"]').forEach(function(h){ h.remove(); });
+                // also remove any present[]/absent[] hidden inputs to avoid duplicates
+                attendanceForm.querySelectorAll('input').forEach(function(h){
+                    var n = h.name || '';
+                    if (n.indexOf('present[') === 0 || n.indexOf('absent[') === 0) {
+                        h.remove();
+                    }
+                });
+
+                // Add inputs for each seen id
+                Object.keys(data.seen || {}).forEach(function(id){
+                    // create student_ids[]
+                    var inEl = document.createElement('input');
+                    inEl.type = 'hidden';
+                    inEl.name = 'student_ids[]';
+                    inEl.value = id;
+                    attendanceForm.appendChild(inEl);
+
+                    if (data.present && data.present[id]) {
+                        var p = document.createElement('input'); p.type = 'hidden'; p.name = 'present[' + id + ']'; p.value = '1'; attendanceForm.appendChild(p);
+                    } else {
+                        var a = document.createElement('input'); a.type = 'hidden'; a.name = 'absent[' + id + ']'; a.value = '1'; attendanceForm.appendChild(a);
+                    }
+                });
+                // allow form to submit normally after modifications
+            });
+        }
+
+        // Initialize
+        restoreFromStorage();
+        attachCheckboxListeners();
+
+        // existing auto-submit handlers for page and page_size
+        (function() {
+            var pageSelect = document.getElementById('page');
+            var pageSize = document.getElementById('page_size');
+            var getFormEl = getForm();
+            if (pageSelect) {
+                pageSelect.addEventListener('change', function() {
+                    // save current visible selections before navigating
+                    syncVisibleToStorage();
+                    if (getFormEl) getFormEl.submit();
+                });
+            }
+            if (pageSize) {
+                pageSize.addEventListener('change', function() {
+                    // reset to first page when page size changes
+                    var pageInput = document.querySelector('select[name="page"]');
+                    if (pageInput) {
+                        pageInput.value = 1;
+                    }
+                    syncVisibleToStorage();
+                    if (getFormEl) getFormEl.submit();
+                });
+            }
+        })();
+
+    })();
+
     function updateClock() {
         var display = document.getElementById('dateTimeDisplay');
         if (!display) return;
