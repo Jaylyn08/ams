@@ -81,43 +81,6 @@ require_once __DIR__ . '/functions/student.php';
                                     </div>
                                 </div>
                         </form>
-
-                        <div class="row mb-2">
-                            <div class="col-md-4 mb-3 mb-md-0">
-                                <div class="p-3 rounded-3 bg-light border">
-                                    <div class="d-flex justify-content-between align-items-center">
-                                        <div>
-                                            <h6 class="text-uppercase text-secondary">Gumamela Total</h6>
-                                            <p class="display-6 mb-0"><?= $sectionTotals['Gumamela'] ?></p>
-                                        </div>
-                                        <span class="badge bg-primary">Gumamela</span>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="col-md-4 mb-3 mb-md-0">
-                                <div class="p-3 rounded-3 bg-light border">
-                                    <div class="d-flex justify-content-between align-items-center">
-                                        <div>
-                                            <h6 class="text-uppercase text-secondary">Tulip Total</h6>
-                                            <p class="display-6 mb-0"><?= $sectionTotals['Tulip'] ?></p>
-                                        </div>
-                                        <span class="badge bg-success">Tulip</span>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div class="col-md-4">
-                                <div class="p-3 rounded-3 bg-light border">
-                                    <div class="d-flex justify-content-between align-items-start">
-                                        <div>
-                                            <h6 class="text-uppercase text-secondary">Date & Time</h6>
-                                            <p class="mb-0" id="dateTimeDisplay">Philippine Standard Time: <?= date('l, F j, Y, g:i:s A') ?></p>
-                                        </div>
-                                        <span class="badge bg-info">Current</span>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
                     </div>
 
                     <form id="attendanceForm" method="POST" class="mb-3">
