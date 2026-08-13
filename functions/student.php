@@ -144,7 +144,69 @@ if ($filterGender === '') {
 } else {
     $query .= ' ORDER BY s.id ASC';
 }
+
+// Pagination / page-size / show-all support
+$pageSize = intval($_GET['page_size'] ?? 10);
+$allowedPageSizes = [10, 15, 20, 50];
+if (!in_array($pageSize, $allowedPageSizes, true)) {
+    $pageSize = 10;
+}
+$showAll = isset($_GET['show_all']) && ($_GET['show_all'] === '1' || $_GET['show_all'] === 'on');
+
+// Count total matching rows
+$countQuery = "SELECT COUNT(*) AS total FROM student s JOIN section sec ON sec.id = s.section_id";
+if (!empty($where)) {
+    $countQuery .= ' WHERE ' . implode(' AND ', $where);
+}
+$totalStudents = 0;
+$countResult = mysqli_query($conn, $countQuery);
+if ($countResult) {
+    $totalStudents = (int) mysqli_fetch_assoc($countResult)['total'];
+    mysqli_free_result($countResult);
+}
+
+$studentsPerPage = $pageSize;
+$currentPage = max(1, intval($_GET['page'] ?? 1));
+$totalPages = max(1, (int) ceil($totalStudents / $studentsPerPage));
+if ($currentPage > $totalPages) {
+    $currentPage = $totalPages;
+}
+
+// Allow simple prev/next nav via a "nav" param
+if (isset($_GET['nav'])) {
+    if ($_GET['nav'] === 'prev') {
+        $currentPage = max(1, $currentPage - 1);
+    } elseif ($_GET['nav'] === 'next') {
+        $currentPage = min($totalPages, $currentPage + 1);
+    }
+}
+
+$offset = ($currentPage - 1) * $studentsPerPage;
+if (!$showAll) {
+    $query .= " LIMIT $studentsPerPage OFFSET $offset";
+}
+
 $query_run = mysqli_query($conn, $query);
+$startIndex = $totalStudents > 0 ? ($showAll ? 1 : $offset + 1) : 0;
+$endIndex = $showAll ? $totalStudents : min($totalStudents, $offset + $studentsPerPage);
+
+$pageParams = [];
+if ($filterSection !== '') {
+    $pageParams['section'] = $filterSection;
+}
+if ($filterGender !== '') {
+    $pageParams['gender'] = $filterGender;
+}
+if ($pageSize !== 10) {
+    $pageParams['page_size'] = $pageSize;
+}
+if ($showAll) {
+    $pageParams['show_all'] = 1;
+}
+if ($attendanceDate !== '') {
+    $pageParams['attendance_date'] = $attendanceDate;
+}
+$pageQuery = !empty($pageParams) ? '&' . http_build_query($pageParams) : '';
 
 $attendanceQuery = $attendanceDate !== '' ? '&attendance_date=' . urlencode($attendanceDate) : '';
 $sectionQuery = $filterSection !== '' ? '&section=' . urlencode($filterSection) . $attendanceQuery : $attendanceQuery;

@@ -20,6 +20,8 @@ require_once __DIR__ . '/functions/student.php';
 <body>
     <?php include __DIR__ . '/includes/sidebar.php'; ?>
 
+   
+
     <div class="app-content">
         <div id="home" class="page-container container mt-4">
 
@@ -52,8 +54,31 @@ require_once __DIR__ . '/functions/student.php';
                                     </select>
                                 </div>
 
-                                <div class="col-md-1 mb-3">
-                                    <button type="submit" class="btn btn-primary btn-apply">Apply</button>
+                                <div class="col-md-10">
+                                    <div class="d-flex align-items-center gap-2">
+                                        <div>
+                                            <select name="page" id="page" class="form-select form-select-sm" style="width:70px;">
+                                                <?php for ($p = 1; $p <= $totalPages; $p++): ?>
+                                                    <option value="<?= $p ?>" <?= $p === $currentPage ? 'selected' : '' ?>><?= $p ?></option>
+                                                <?php endfor; ?>
+                                            </select>
+                                        </div>
+
+                                        <div class="btn-group">
+                                            <button type="submit" name="nav" value="prev" class="btn btn-sm btn-outline-secondary" <?= $currentPage <= 1 ? 'disabled' : '' ?>>&lt;</button>
+                                            <button type="submit" name="nav" value="next" class="btn btn-sm btn-outline-secondary" <?= $currentPage >= $totalPages ? 'disabled' : '' ?>>&gt;</button>
+                                        </div>
+                                        <div class="ms-auto d-flex align-items-left gap-2">
+                                            <label class="mb-0">Number of rows:</label>
+                                            <select id="page_size" name="page_size" class="form-select form-select-sm" style="width:90px;">
+                                                <option value="10" <?= $pageSize === 10 ? ' selected' : '' ?>>10</option>
+                                                <option value="15" <?= $pageSize === 15 ? ' selected' : '' ?>>15</option>
+                                                <option value="20" <?= $pageSize === 20 ? ' selected' : '' ?>>20</option>
+                                                <option value="50" <?= $pageSize === 50 ? ' selected' : '' ?>>50</option>
+                                            </select>
+                                            <button type="submit" class="btn btn-sm btn-primary">Apply</button>
+                                        </div>
+                                    </div>
                                 </div>
                         </form>
 
@@ -164,6 +189,29 @@ require_once __DIR__ . '/functions/student.php';
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
     <script src="assets/app.js"></script>
+    <script>
+        // auto-submit when page select or page_size changes
+        (function() {
+            var pageSelect = document.getElementById('page');
+            var pageSize = document.getElementById('page_size');
+            var form = document.querySelector('form[method="get"]');
+            if (pageSelect) {
+                pageSelect.addEventListener('change', function() {
+                    form.submit();
+                });
+            }
+            if (pageSize) {
+                pageSize.addEventListener('change', function() {
+                    // reset to first page when page size changes
+                    var pageInput = document.querySelector('select[name="page"]');
+                    if (pageInput) {
+                        pageInput.value = 1;
+                    }
+                    form.submit();
+                });
+            }
+        })();
+    </script>
 
 </body>
 
