@@ -24,7 +24,7 @@ require_once __DIR__ . '/functions/student.php';
 
       <div class="wrap" style="max-width:900px;width:100%;padding:32px;">
         <div class="d-flex justify-content-between align-items-center" style="margin-top:0;">
-          <h3 class="mb-0">Welcome, <?= htmlspecialchars($_SESSION['user_name']); ?>!</h3>
+          <h3 class="mb-0 text-uppercase">Welcome, <?= htmlspecialchars($_SESSION['user_name']); ?>!</h3>
           <div id="dateTimeDisplay" class="text-muted">Philippine Standard Time: <?= $manilaFormatted ?></div>
         </div>
         <div class="summary-cards d-flex flex-wrap gap-3" style="margin-top:px;">
@@ -37,13 +37,12 @@ require_once __DIR__ . '/functions/student.php';
             <h6>Section: Tulip </h6>
             <div class="summary-value"><?= $sectionTotals['Tulip'] ?></div>
           </div>
-
-          
         </div>
+
         <div class="summary-card" style="max-width:220px;margin:20px 0;">
-            <h6>Total Students</h6>
-            <div class="summary-value"><?= $totalStudents ?></div>
-          </div>
+          <h6>Total Students</h6>
+          <div class="summary-value"><?= $totalStudents ?></div>
+        </div>
       </div>
 
     </div>
