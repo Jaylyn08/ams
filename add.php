@@ -44,7 +44,7 @@ require_once __DIR__ . '/functions/add.php';
 
                             <div class="col-md-7 mb-3">
                                 <label class="form-label"> Full Name </label>
-                                <input type="text" id="full_name" name="full_name" class="form-control">
+                                <input type="text" id="full_name" name="full_name" class="form-control text-uppercase">
                             </div>
                             <div class="col-md-4 mb-3">
                                 <select id="gender" class="form-select" name="gender" aria-label="Default select example">
