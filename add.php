@@ -28,11 +28,11 @@ require_once __DIR__ . '/functions/add.php';
         <?php include('message.php'); ?>
 
         <div class="row">
-            <div class="col-md-8 mx-auto">
+            <div class="col-md-7 mx-auto">
                 <div class="card">
                     <div class="card-header">
                         <h4> Add Student
-                            <a href="student.php" class="btn btn-secondary float-end">Back</a>
+                            <a href="student.php" class="col-md-3 btn btn-secondary float-end">Back</a>
                         </h4>
 
                     </div>
@@ -78,7 +78,7 @@ require_once __DIR__ . '/functions/add.php';
                             </div>
 
                             <div class="mb-3">
-                                <button type="submit" name="save_user" class="btn btn-primary">Save</button>
+                                <button type="submit" name="save_user" class="col-md-3 btn btn-primary">Save</button>
 
                             </div>
 
